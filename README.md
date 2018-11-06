@@ -36,3 +36,70 @@ In this exercise we're going to create a simple application which will react on 
 * Set `Role name` as `foundation-labs-lambda-role-<your_name>`
 * Choose `Amazon S3 object read-only permissions` in `Policy templates`
 * Click `Create function`
+
+### Create S3 put object event
+Now let's create a trigger for our lambda function. That should be a reaction to new object uploads into our bucket:
+* On our lambda function screen, find `Designer` section and on the left side of it click on `S3` in `Add triggers` menu. That should add a S3 configuration block:<br>
+![S3 trigger](images/lambda-s3-trigger.png)
+* Click on that block and scroll down to `Configure triggers` section
+* Set `bucket` field as `foundation-labs-lambda-<your_name>`
+* Set `Event type` as `Object Created (All)`
+* Make sure that `Enable trigger` is ticked
+* Click `Add`, then click `Same` in the top right corner. That should save all changes:<br>
+![S3 trigger](images/lambda-s3-trigger-saved.png)
+
+### Write lambda code
+It's time to write some code! Our function will need to S3 put object event, sample of which could be found in AWS Documentation (see [Event samples](https://docs.aws.amazon.com/lambda/latest/dg/eventsources.html#eventsources-s3-put)). For simplicity, here is a stripped version of the sample with only fields which we'll need in our exercise:<br>
+```
+{
+  "Records": [
+    {
+      "s3": {
+        "object": {
+          "key": "HappyFace.jpg",
+          ...
+        },
+        "bucket": {
+          "name": "sourcebucket",
+          ...
+        },
+        ...
+      },
+      ...
+    }
+  ]
+}
+```
+Keeping this in mind, we write the following code:
+```
+//Init and setup
+const AWS = require('aws-sdk');
+AWS.config.update({region: process.env.AWS_REGION});
+const s3 = new AWS.S3();
+const indexName = 'index.lst';
+
+//Lambda function event handler
+exports.handler = async (event, context) => {
+    console.log(JSON.stringify(event));
+
+    //Get index.lst from S3 bucket
+    const bucketName = event.body.Records[0].s3.bucket.name;
+    const objectKey = event.body.Records[0].s3.object.key;
+    const indexMeta = {
+        Bucket: bucketName,
+        Key: indexName
+    };
+    const indexObject = await (s3.getObject(indexMeta).promise());
+
+    //Modify index.lst data
+    let indexData = indexObject.Body
+    indexData += `${objectKey}\n`
+    indexMeta.Body = indexData;
+
+    //Upload updated index.lst back to S3 bucket
+    await (s3.putObject(indexMeta).promise());
+
+    return 'Indexer has completed successfully';
+};
+
+```
