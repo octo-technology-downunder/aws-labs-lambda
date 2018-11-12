@@ -65,7 +65,7 @@ We'll need to add write permissions to our lambda's role to allow it create/modi
 
 
 ### Create S3 put object event
-Now let's create a trigger for our lambda function. That should be a reaction to new object uploads into our bucket:
+Now let's create a trigger for our lambda function. That will be a reaction to object uploads into our bucket.<br> _For the sake of simplicity, we'll not distinguish between new objects and new versions of existing objects_
 * On our lambda function screen, find `Designer` section and on the left side of it click on `S3` in `Add triggers` menu. That should add a S3 configuration block:<br>
 ![S3 trigger](images/lambda-s3-trigger.png)
 * Click on that block and scroll down to `Configure triggers` section
@@ -97,40 +97,8 @@ It's time to write some code! Our function will need to S3 put object event, sam
   ]
 }
 ```
-Keeping this in mind, we need to write the code<br>
-Make sure you have your Node.js and NPM utilities [installed](https://nodejs.org/en/download/)
-Open a Node.js project from `exercise1` directory of this repo (`master` branch) and write down the code. You'll need to have tests passed
-
-
-```
-//Init and setup
-const AWS = require('aws-sdk');
-AWS.config.update({region: process.env.AWS_REGION});
-const s3 = new AWS.S3();
-const indexName = 'index.lst';
-
-//Lambda function event handler
-exports.handler = async (event, context) => {
-    console.log(JSON.stringify(event));
-
-    //Get index.lst from S3 bucket
-    const bucketName = event.body.Records[0].s3.bucket.name;
-    const objectKey = event.body.Records[0].s3.object.key;
-    const indexMeta = {
-        Bucket: bucketName,
-        Key: indexName
-    };
-    const indexObject = await (s3.getObject(indexMeta).promise());
-
-    //Modify index.lst data
-    let indexData = indexObject.Body
-    indexData += `${objectKey}\n`
-    indexMeta.Body = indexData;
-
-    //Upload updated index.lst back to S3 bucket
-    await (s3.putObject(indexMeta).promise());
-
-    return 'Indexer has completed successfully';
-};
-
-```
+Keeping this in mind, we need to write the code.<br>
+First of all, make sure you have your Node.js and NPM utilities [installed](https://nodejs.org/en/download/).<br>
+Open a Node.js project from `exercise1` directory of this repo (`master` branch) and write down the code.<br>
+To help you with the task, we have set up a suite of unit tests, so you need to make them green.<br>
+To run your tests, open your terminal, `cd` to the `exercise1` directory and run `npm test`
