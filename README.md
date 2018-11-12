@@ -97,8 +97,12 @@ It's time to write some code! Our function will need to S3 put object event, sam
   ]
 }
 ```
-Keeping this in mind, we need to write the code.<br>
-First of all, make sure you have your Node.js and NPM utilities [installed](https://nodejs.org/en/download/).<br>
-Open a Node.js project from `exercise1` directory of this repo (`master` branch) and write down the code.<br>
-To help you with the task, we have set up a suite of unit tests, so you need to make them green.<br>
-To run your tests, open your terminal, `cd` to the `exercise1` directory and run `npm test`
+Keeping this in mind, please write the code. Here are the guidelines for that:
+* First of all, make sure you have your Node.js and NPM utilities installed. If not, follow [these](https://nodejs.org/en/download/) instructions
+* Open a Node.js project from `exercise1` directory of this repo (`master` branch) and run `npm install`
+* Open index.js and write down the code of the app
+* There are only 2 api calls to S3 which will be required:
+  * `getObject` to get current `index.lst` from the bucket
+  * `putObject` to put updated `index.lst` back to the bucket
+* To help you with the task, we have set up a suite of unit tests, so you need to make them green
+* To run your tests, open your terminal, `cd` to the `exercise1` directory and run `npm test`
