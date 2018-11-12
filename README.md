@@ -21,13 +21,16 @@ Now let's dive into the world of serverless technology :)
 ## **_Exercise 1:_ Create a S3 bucket indexer using Lambda function**
 In this exercise we're going to create a simple application which will react on uploading events in S3 bucket and write a object's key into `index.lst` file in the same bucket<br>
 ![Event driven lambda](images/lambda-event.png)
+Few things to mention:
+* logic of the app is a basic one, no complex cases
+* we want to ignore events for the `index.lst` file to avoid indefinite loop
 
 ### Create S3 bucket
 * In AWS Console, go to `S3` service, then click `Create bucket`
 * Type `foundation-labs-lambda-<your_name>` in the `Bucket name` field (don't forget to replace <your_name> with your name ;) )
 * Leave all other parameters as default and create the bucket
 
-### Create Lambda function skeleton
+### Create lambda function skeleton
 * In AWS Console, go to `Lambda` service, then click `Create function`
 * Select `Author from scratch`
 * Set `Name` as `foundation-labs-lambda-<your_name>`
@@ -36,6 +39,30 @@ In this exercise we're going to create a simple application which will react on 
 * Set `Role name` as `foundation-labs-lambda-role-<your_name>`
 * Choose `Amazon S3 object read-only permissions` in `Policy templates`
 * Click `Create function`
+
+### Modify lambda role
+We'll need to add write permissions to our lambda's role to allow it create/modify objects in our bucket
+* In AWS Console, go to `IAM` service, then click `Roles` on the left panel
+* Find your `foundation-labs-lambda-role-<your_name>` role in the list, then click on it
+* Click `Add inline policy`. Then in `JSON` tab put following code (replace <your_name>):
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "GetAndPut",
+            "Effect": "Allow",
+            "Action": [
+                "s3:*
+            ],
+            "Resource": "arn:aws:s3:::foundation-labs-lambda-<your_name>*"
+        }
+    ]
+}
+```
+* Click `Review policy`, then type `foundation-labs-lambda-s3-policy-<your_name>` in the `name` field
+* Click `Save changes`
+
 
 ### Create S3 put object event
 Now let's create a trigger for our lambda function. That should be a reaction to new object uploads into our bucket:
@@ -70,7 +97,11 @@ It's time to write some code! Our function will need to S3 put object event, sam
   ]
 }
 ```
-Keeping this in mind, we write the following code:
+Keeping this in mind, we need to write the code<br>
+Make sure you have your Node.js and NPM utilities [installed](https://nodejs.org/en/download/)
+Open a Node.js project from `exercise1` directory of this repo (`master` branch) and write down the code. You'll need to have tests passed
+
+
 ```
 //Init and setup
 const AWS = require('aws-sdk');

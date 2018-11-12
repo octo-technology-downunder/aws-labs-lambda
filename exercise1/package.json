@@ -1,0 +1,19 @@
+{
+  "name": "exercise1",
+  "version": "1.0.0",
+  "description": "aws-lambda-lab exercise 1",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --timeout 10000 --reporter nyan ./test/unit"
+  },
+  "author": "Ilya Trofimov",
+  "license": "ISC",
+  "devDependencies": {
+    "assert": "^1.4.1",
+    "aws-sdk": "^2.351.0",
+    "aws-sdk-mock": "^4.2.0",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "sinon": "^7.1.1"
+  }
+}
