@@ -6,9 +6,8 @@ In this lab we'll need to create a serverless application using AWS Lambda servi
 That will cover the following topics:
 - Working with AWS Lambda service via AWS console
 - Creating a simple lambda function with S3 event trigger
-- Creating an application using Serverless framework
 
-This lab will take approximately 90 minutes
+This lab will take approximately 60 minutes
 
 ## Overview of technology
 AWS provides a set of managed services which do not require infrastructure setup and management. Such services are usually referenced as `serverless`. These include:
@@ -18,7 +17,7 @@ AWS provides a set of managed services which do not require infrastructure setup
 
 Now let's dive into the world of serverless technology :)
 
-## **_Exercise 1:_ Create a S3 bucket indexer using Lambda function**
+## **_Exercise:_ Create a S3 bucket indexer using Lambda function**
 In this exercise we're going to create a simple application which will react on uploading events in S3 bucket and write a object's key into `index.lst` file in the same bucket<br>
 ![Event driven lambda](images/lambda-event.png)
 Few things to mention:
@@ -130,7 +129,11 @@ If you don't see `index.lst` created, you will need to troubleshoot your lambda 
 * Here you can see related logs and execution errors if any<br>![logs](images/lambda-debug.png)
 
 
-#### Congratulations!!! You've successfully created and tested a load balanced application!
+### Congratulations!!! You've successfully created and tested a load balanced application!
 If everything is done properly and debugged, your indexer application should work!
 
 ![Success!](images/lambda-success.jpeg "Success!")<br>
+
+
+## Using Serverless framework
+The approach to developing lambda functions described above is straightforward and a bit tedious. There are however frameworks in the market that streamlines creation of the serverless applications. [*Serverless*](https://serverless.com/) framework is one of them. It allows to define all steps we did manually in this exercise (and much more) as a code, in simple and easy to understand form. We recommend have a look on quick [REST API tutorial](https://serverless.com/blog/serverless-express-rest-api/) in their blog
