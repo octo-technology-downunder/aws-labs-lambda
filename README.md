@@ -8,7 +8,7 @@ That will cover the following topics:
 - Creating a simple lambda function with S3 event trigger
 - Creating an application using Serverless framework
 
-This lab will take approximately 60 minutes
+This lab will take approximately 90 minutes
 
 ## Overview of technology
 AWS provides a set of managed services which do not require infrastructure setup and management. Such services are usually referenced as `serverless`. These include:
@@ -102,7 +102,35 @@ Keeping this in mind, please write the code. Here are the guidelines for that:
 * Open a Node.js project from `exercise1` directory of this repo (`master` branch) and run `npm install`
 * Open index.js and write down the code of the app
 * There are only 2 api calls to S3 which will be required:
-  * `getObject` to get current `index.lst` from the bucket
-  * `putObject` to put updated `index.lst` back to the bucket
+  * [getObject](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#getObject-property) to get current `index.lst` from the bucket
+  * [putObject](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#putObject-property) to put updated `index.lst` back to the bucket
 * To help you with the task, we have set up a suite of unit tests, so you need to make them green
 * To run your tests, open your terminal, `cd` to the `exercise1` directory and run `npm test`
+* Don't use any additional libraries or create any additional files - you just don't need them for that simple exercise! KISS!
+* Don't move `new AWS.S3();` outside of handler function - that will brake tests
+
+### Upload lambda code to AWS
+If you managed to get your tests all green, go ahead and upload the code of `index.js` into your lambda function:
+* In AWS Console, go to `Lambda` service, then open your function `foundation-labs-lambda-<your_name>`
+* Click on the block with your function name:<br>![lambda block](images/lambda-function-block.png)
+* Scroll down to `Function code` block and paste there contents of your `index.js`
+* Click Save in right top corner
+
+### Test your lambda
+Once all steps are completed, we can see how our indexer works:
+* In AWS Console, go to S3, then to your bucket
+* Upload any file to our bucket
+* Check if `index.lst` is created in the root of the bucket and contains uploaded file name
+
+### Debug your lambda
+If you don't see `index.lst` created, you will need to troubleshoot your lambda by going to CloudWatch logs. For the purpose of this exercise we'll see anyway how logs look like there:
+* On your lambda function main screen, click on `Monitoring` tab, then click on `View logs in CloudWatch`
+* It should navigate you to the `Cloudwatch` -> `Logs` section and display a list of log streams for your lambda. AWS Navigation path should display something like<br>`CloudWatch > Log Groups > Streams for /aws/lambda/foundation-labs...`
+* Click on the stream with the latest `Last Event Time`
+* Here you can see related logs and execution errors if any<br>![logs](images/lambda-debug.png)
+
+
+#### Congratulations!!! You've successfully created and tested a load balanced application!
+If everything is done properly and debugged, your indexer application should work!
+
+![Success!](images/lambda-success.jpeg "Success!")<br>
