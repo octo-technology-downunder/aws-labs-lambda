@@ -20,10 +20,11 @@ describe('index', function () {
             const indexBody = 'file1.txt\nfile2.txt\nfile3.txt';
             const newFileName = 'sample.text';
             const newIndexBody = indexBody + newFileName + "\n";
-            const putObjectSpy = sinon.spy();
+            const putObjectStub = sinon.stub();
+            putObjectStub.returns(Promise.resolve());
 
             AWSMock.mock('S3', 'getObject', JSON.parse(fs.readFileSync('./test/data/sampleIndex.json').toString()));
-            AWSMock.mock('S3', 'putObject', putObjectSpy);
+            AWSMock.mock('S3', 'putObject', putObjectStub);
 
             let index = require("../../index");
 
@@ -33,13 +34,14 @@ describe('index', function () {
                 Body: newIndexBody
             };
 
+            console.log("SETUP COMPLETED. RUNNING TEST:");
             await index.handler(JSON.parse(fs.readFileSync("./test/data/sampleEvent.json").toString()), {});
-            expect(putObjectSpy.calledOnce).to.be.true;
             console.log("ARGS:");
-            console.log(putObjectSpy.args[0][0]);
+            console.log(JSON.stringify(putObjectStub));
+            expect(putObjectStub.calledOnce).to.be.true;
             console.log("expectedNewIndex:");
             console.log(expectedNewIndex);
-            expect(putObjectSpy.calledWith(expectedNewIndex)).to.be.true;
+            expect(putObjectStub.calledWith(expectedNewIndex)).to.be.true;
 
         });
     })
