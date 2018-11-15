@@ -7,9 +7,6 @@ const indexName = 'index.lst';
 exports.handler = async (event, context) => {
     const s3 = new AWS.S3();
 
-    console.log(JSON.stringify(event));
-
-    //Get index.lst from S3 bucket
     const bucketName = event.Records[0].s3.bucket.name;
     const objectKey = event.Records[0].s3.object.key;
 
@@ -23,8 +20,6 @@ exports.handler = async (event, context) => {
 
     let indexData;
     try{
-        console.log("Trying to get with indexMeta:");
-        console.log(JSON.stringify(indexMeta));
         const indexObject = await (s3.getObject(indexMeta).promise());
         indexData = indexObject.Body
     } catch (err) {
@@ -34,15 +29,9 @@ exports.handler = async (event, context) => {
             throw err;
     }
 
-    console.log("indexData:");
-    console.log(JSON.stringify(indexData));
-
-    //Modify index.lst data
     indexData += `${objectKey}\n`;
     indexMeta.Body = indexData;
-    console.log("New indexMeta:");
-    console.log(JSON.stringify(indexMeta));
-    //Upload updated index.lst back to S3 bucket
+
     await (s3.putObject(indexMeta).promise());
 
     return 'Indexer has completed successfully';
