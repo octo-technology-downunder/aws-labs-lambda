@@ -7,30 +7,12 @@ const indexName = 'index.lst';
 exports.handler = async (event, context) => {
     const s3 = new AWS.S3();
 
+    let indexMeta;
     const bucketName = event.Records[0].s3.bucket.name;
-    const objectKey = event.Records[0].s3.object.key;
 
-    if (objectKey === indexName)
-        return 'Skipping index file updagte event';
-
-    const indexMeta = {
-        Bucket: bucketName,
-        Key: indexName
-    };
-
-    let indexData;
-    try{
-        const indexObject = await (s3.getObject(indexMeta).promise());
-        indexData = indexObject.Body
-    } catch (err) {
-        if (err.code === 'NoSuchKey')
-            indexData = "";
-        else
-            throw err;
-    }
-
-    indexData += `${objectKey}\n`;
-    indexMeta.Body = indexData;
+    //
+    //implement missing logic here
+    //
 
     await (s3.putObject(indexMeta).promise());
 
